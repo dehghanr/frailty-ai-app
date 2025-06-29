@@ -28,9 +28,29 @@ If you use this tool in your research, please cite our paper:
 > Dehghan Rouzi, M., Lee, M., Beom, J., Bidadi, S., Ouattas, A., Cay, G., ... & Najafi, B. (2024). Quantitative biomechanical analysis in validating a video-based model to remotely assess physical frailty: a potential solution to telehealth and globalized remote-patient monitoring. *Biomedical Engineering Letters*, 1-11.  
 > [https://link.springer.com/article/10.1007/s13534-024-00410-2](https://link.springer.com/article/10.1007/s13534-024-00410-2)
 
-## 🚫 Note
+## 📁 Folder Structure
 
-The `uploads/` folder is excluded from version control to protect user privacy. `Results/` folders are included but empty.
+project-root/
+├── app.py # Main Flask app
+├── FrailtyModule.py # AI logic
+├── Main_TeleFM_Mohammad.py
+├── mohammad_signal_analysis.py
+├── Results/ # Output folders (included but empty)
+│ ├── Angle/
+│ ├── angular_acc/
+│ ├── frailty_index/
+│ └── gif_files/
+├── uploads/ # User-uploaded videos (excluded from Git)
+├── static/ # Static assets (e.g., protocol.pdf)
+├── templates/ # HTML templates
+├── environment.yml # Conda environment dependencies
+└── README.md # Project documentation
+
+pgsql
+Copy
+Edit
+
+> 🚫 **Note:** The `uploads/` folder is excluded from version control to protect user privacy. `Results/` folders are included but empty.
 
 
 ## 💻 Deployment
