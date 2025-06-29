@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Frailty Assessment</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      max-width: 650px;
+      margin: 50px auto;
+      padding: 30px;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    label {
+      font-weight: bold;
+    }
+    .loader {
+      display: none;
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #3498db;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .message {
+      text-align: center;
+      font-style: italic;
+      color: #666;
+      display: none;
+    }
+    .center {
+      text-align: center;
+    }
+    button,
+    input[type="submit"] {
+      background-color: #4caf50;
+      color: white;
+      padding: 12px 22px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 12px;
+      transition: background-color 0.3s;
+    }
+    button:hover,
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+    #download-btn {
+      display: none;
+    }
+    .tooltip {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+    #consent-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      text-align: left;
+      padding: 40px;
+    }
+    #consent-box {
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      max-width: 600px;
+    }
+    #content-wrapper {
+      filter: blur(5px);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.6s ease-in-out;
+    }
+    #content-wrapper.show {
+      filter: none;
+      pointer-events: auto;
+      opacity: 1;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 20px 0;
+    }
+    .custom-file-upload {
+      display: inline-block;
+      padding: 10px 20px;
+      cursor: pointer;
+      background-color: #4caf50;
+      color: white;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+    .custom-file-upload:hover {
+      background-color: #45a049;
+    }
+    input[type="file"] {
+      display: none;
+    }
+    #file-selected {
+      margin-left: 10px;
+      font-size: 14px;
+      color: #555;
+    }
+    #drop-zone {
+      border: 2px dashed #ccc;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      color: #666;
+      background-color: #fdfdfd;
+      transition: border-color 0.3s;
+    }
+    #drop-zone.dragover {
+      border-color: #4caf50;
+      background-color: #f3fff3;
+    }
+
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 13px;
+      color: #888;
+    }
+    .footer a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    .footer a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+  </style>
+</head>
+<body>
+
+<div id="consent-overlay">
+  <div id="consent-box">
+    <h3>Terms & Conditions</h3>
+    <p>
+      By using this application, you confirm that the uploaded video does not contain any personally identifiable information or protected health information unless explicitly consented by the subject.<br><br>
+      <strong>Disclaimer:</strong> All uploaded videos are processed temporarily and automatically deleted after processing. We do not store, share, or use your video content for any purpose beyond the frailty assessment.<br><br>
+      You acknowledge that this is a research tool and not intended for clinical diagnosis. The developers are not liable for misuse, unauthorized data collection, or third-party access to your system or content.<br><br>
+    </p>
+    <div style="text-align: center;">
+      <button onclick="acceptTerms()">I Understand and Agree</button>
+    </div>
+  </div>
+</div>
+
+<div id="content-wrapper">
+  <h2>Upload Video for Frailty Assessment</h2>
+
+  <div class="center">
+    <form method="GET" action="/protocol">
+      <button type="submit" style="background-color:#007bff;">📄 Download Protocol PDF</button>
+    </form>
+  </div>
+  <br>
+
+  <form id="assessment-form" method="POST" enctype="multipart/form-data">
+    <label>📁 Video File:</label><br>
+
+    <div id="drop-zone">
+      <p>Drag & drop your video here, or</p>
+      <label for="video" class="custom-file-upload">Choose File</label>
+      <input id="video" type="file" name="video" accept="video/mp4" required onchange="updateFileName(this)">
+      <span id="file-selected">No file chosen</span>
+    </div><br><br>
+
+    <hr>
+    <label>🧠 Task Type:</label><br>
+    <input type="radio" name="task_type" value="ST" checked> Single Task
+    <input type="radio" name="task_type" value="DT"> Dual Task<br><br>
+
+    <hr>
+    <label>✋ Is the participant right-handed?</label><br>
+    <input type="radio" name="handedness" value="Right" checked> Right
+    <input type="radio" name="handedness" value="Left"> Left<br><br>
+
+    <hr>
+    <label>🔄 Flip video vertically:</label><br>
+    <input type="radio" name="flip" value="True"> Yes
+    <input type="radio" name="flip" value="False" checked> No<br>
+    <div class="tooltip">(Use this if the video looks upside-down)</div><br>
+
+    <div class="center">
+      <input type="submit" value="Run Assessment">
+      <div class="loader" id="loader"></div>
+      <div class="message" id="loading-message">Please wait while the video is being analyzed. This may take some time.</div>
+    </div>
+  </form>
+
+
+  <div class="center">
+    <form method="GET" action="/download" id="download-form">
+      <button type="submit" id="download-btn">⬇️ Download Result</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  function acceptTerms() {
+    localStorage.setItem('frailtyConsent', 'true');
+    document.getElementById('consent-overlay').style.display = 'none';
+    document.getElementById('content-wrapper').classList.add('show');
+  }
+
+  function updateFileName(input) {
+    const fileName = input.files.length > 0 ? input.files[0].name : "No file chosen";
+    document.getElementById('file-selected').textContent = fileName;
+  }
+
+  const form = document.getElementById('assessment-form');
+  const loader = document.getElementById('loader');
+  const message = document.getElementById('loading-message');
+  const downloadBtn = document.getElementById('download-btn');
+
+  form.addEventListener('submit', function () {
+    loader.style.display = 'block';
+    message.style.display = 'block';
+    downloadBtn.style.display = 'none';
+  });
+
+  window.addEventListener('load', function () {
+    // Only show overlay if consent not yet given
+    const consentGiven = localStorage.getItem('frailtyConsent') === 'true';
+    if (!consentGiven) {
+      document.getElementById('consent-overlay').style.display = 'flex';
+    } else {
+      document.getElementById('content-wrapper').classList.add('show');
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('success')) {
+      downloadBtn.style.display = 'inline-block';
+    }
+  });
+  const dropZone = document.getElementById('drop-zone');
+
+  dropZone.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+  });
+
+  dropZone.addEventListener('dragleave', function(e) {
+    dropZone.classList.remove('dragover');
+  });
+
+  dropZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type === "video/mp4") {
+      const input = document.getElementById('video');
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      input.files = dataTransfer.files;
+      updateFileName(input);
+    } else {
+      alert("Only MP4 video files are supported.");
+    }
+  });
+
+</script>
+
+<div class="footer">
+  If this model supports your research, please cite our paper
+  <a href="https://link.springer.com/article/10.1007/s13534-024-00410-2" target="_blank"><strong>(Link)</strong></a>.<br>
+  <em>M. Dehghan Rouzi et al. (2024). Quantitative video-based model to remotely assess frailty: a potential solution to telehealth and globalized remote-patient monitoring.</em><br><br>
+  Developed by M Rouzi under supervision of Dr. Bijan Najafi.
+  For support contact <a href="mailto:mrouzi@mednet.ucla.edu">mrouzi@mednet.ucla.edu</a>
+</div>
+
+
+</body>
+</html>

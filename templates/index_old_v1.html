@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Frailty Assessment</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            max-width: 650px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="file"],
+        input[type="radio"] {
+            margin-bottom: 10px;
+        }
+        .loader {
+            display: none;
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .message {
+            text-align: center;
+            font-style: italic;
+            color: #666;
+            display: none;
+        }
+        .center {
+            text-align: center;
+        }
+        button, input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 22px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 12px;
+            transition: background-color 0.3s;
+        }
+        button:hover, input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        #download-btn {
+            display: none;
+        }
+        .tooltip {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Upload Video for Frailty Assessment</h2>
+
+    <div class="center">
+        <form method="GET" action="/protocol">
+            <button type="submit" style="background-color:#007bff;">📄 Download Protocol PDF</button>
+        </form>
+    </div>
+    <br>
+
+    <form id="assessment-form" method="POST" enctype="multipart/form-data">
+        <label>Video File:</label><br>
+        <input type="file" name="video" required><br><br>
+
+        <label>Task Type:</label><br>
+        <input type="radio" name="task_type" value="ST" checked> Single Task
+        <input type="radio" name="task_type" value="DT"> Dual Task<br><br>
+
+        <label>Is the participant right-handed?</label><br>
+        <input type="radio" name="handedness" value="Right" checked> Right
+        <input type="radio" name="handedness" value="Left"> Left<br><br>
+
+        <label>Flip video vertically:</label><br>
+        <input type="radio" name="flip" value="True"> Yes
+        <input type="radio" name="flip" value="False" checked> No<br>
+        <div class="tooltip">(Use this if the video looks upside-down)</div><br>
+
+        <div class="center">
+            <input type="submit" value="Run Assessment">
+            <div class="loader" id="loader"></div>
+            <div class="message" id="loading-message">Please wait while the video is being analyzed. This may take some time.</div>
+        </div>
+    </form>
+
+    <div class="center">
+        <form method="GET" action="/download" id="download-form">
+            <button type="submit" id="download-btn">⬇️ Download Result</button>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('assessment-form');
+        const loader = document.getElementById('loader');
+        const message = document.getElementById('loading-message');
+        const downloadBtn = document.getElementById('download-btn');
+
+        form.addEventListener('submit', function () {
+            loader.style.display = 'block';
+            message.style.display = 'block';
+            downloadBtn.style.display = 'none';
+        });
+
+        window.addEventListener('load', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('success')) {
+                downloadBtn.style.display = 'inline-block';
+            }
+        });
+    </script>
+</body>
+</html>

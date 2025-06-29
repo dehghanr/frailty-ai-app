@@ -1,0 +1,16 @@
+# Exclude files in uploads/
+uploads/*
+
+# But keep the folder
+!uploads/.gitkeep
+
+# Python junk
+__pycache__/
+*.pyc
+
+# IDE/conda/venv
+.env
+*.env
+*.ipynb_checkpoints/
+.vscode/
+.idea/

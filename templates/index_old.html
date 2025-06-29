@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Frailty Assessment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
+        }
+        h2 {
+            text-align: center;
+        }
+        .loader {
+            display: none;
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .message {
+            text-align: center;
+            font-style: italic;
+            color: #555;
+            display: none;
+        }
+        .center {
+            text-align: center;
+        }
+        #download-btn {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Upload Video for Frailty Assessment</h2>
+    <form id="assessment-form" method="POST" enctype="multipart/form-data">
+        <label>Video File:</label><br>
+        <input type="file" name="video" required><br><br>
+
+        <label>Task Type:</label><br>
+        <input type="radio" name="task_type" value="ST" required> Single Task
+        <input type="radio" name="task_type" value="DT"> Dual Task<br><br>
+
+        <label>Right Side:</label><br>
+        <input type="radio" name="right" value="True" checked> True
+        <input type="radio" name="right" value="False"> False<br><br>
+
+        <label>Flip Video:</label><br>
+        <input type="radio" name="flip" value="True"> True
+        <input type="radio" name="flip" value="False" checked> False<br><br>
+
+        <div class="center">
+            <input type="submit" value="Run Assessment">
+            <div class="loader" id="loader"></div>
+            <div class="message" id="loading-message">Please wait while the video is being analyzed. This may take a few seconds to a few minutes.</div>
+        </div>
+    </form>
+
+    <div class="center">
+        <form method="GET" action="/download" id="download-form">
+            <button type="submit" id="download-btn">Download Result</button>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('assessment-form');
+        const loader = document.getElementById('loader');
+        const message = document.getElementById('loading-message');
+        const downloadBtn = document.getElementById('download-btn');
+
+        form.addEventListener('submit', function () {
+            loader.style.display = 'block';
+            message.style.display = 'block';
+            downloadBtn.style.display = 'none';
+        });
+
+        window.addEventListener('load', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('success')) {
+                downloadBtn.style.display = 'inline-block';
+            }
+        });
+    </script>
+</body>
+</html>
