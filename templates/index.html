@@ -233,7 +233,7 @@
 
 <script>
   function acceptTerms() {
-    localStorage.setItem('frailtyConsent', 'true');
+    sessionStorage.setItem('frailtyConsent', 'true');
     document.getElementById('consent-overlay').style.display = 'none';
     document.getElementById('content-wrapper').classList.add('show');
   }
@@ -256,7 +256,7 @@
 
   window.addEventListener('load', function () {
     // Only show overlay if consent not yet given
-    const consentGiven = localStorage.getItem('frailtyConsent') === 'true';
+    const consentGiven = sessionStorage.getItem('frailtyConsent') === 'true';
     if (!consentGiven) {
       document.getElementById('consent-overlay').style.display = 'flex';
     } else {

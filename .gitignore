@@ -14,3 +14,10 @@ __pycache__/
 *.ipynb_checkpoints/
 .vscode/
 .idea/
+
+# Ignore old/deprecated code and HTML
+main.py
+main2.py
+main_file.py
+mohammad_signal_analysis_old.py
+templates/index_old*
