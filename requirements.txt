@@ -12,3 +12,4 @@ matplotlib==3.10.3
 pillow==11.2.1
 pip==25.1
 mediapipe==0.10.21
+gunicorn==21.2.0
