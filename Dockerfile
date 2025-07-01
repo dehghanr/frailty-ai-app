@@ -1,17 +1,22 @@
-# Use official Python 3.10 base image
 FROM python:3.10-slim
 
-# Set working directory
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Set work directory
 WORKDIR /app
 
-# Copy everything to the container
-COPY . .
-
-# Upgrade pip and install dependencies
+# Install dependencies
+COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Expose port (not required by GCP, but good practice)
+# Copy project files
+COPY . .
+
+# Expose the port used by the app
 EXPOSE 8080
 
-# Start the Flask app using Gunicorn
+# Start the application with gunicorn
 CMD ["gunicorn", "-b", "0.0.0.0:8080", "app:app"]
+
