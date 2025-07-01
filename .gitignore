@@ -1,8 +1,16 @@
 # Exclude files in uploads/
 uploads/*
+Results/Angle/*
+Results/angular_acc/*
+Results/frailty_index/*
+Results/gif_files/*
 
 # But keep the folder
 !uploads/.gitkeep
+!Results/Angle/.gitkeep
+!Results/angular_acc/.gitkeep
+!Results/frailty_index/.gitkeep
+!Results/gif_files/.gitkeep
 
 # Python junk
 __pycache__/
