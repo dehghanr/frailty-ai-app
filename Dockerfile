@@ -1,22 +1,21 @@
-FROM python:3.10-slim
+# Install system dependencies for cv2
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       libgl1 libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Set work directory
-WORKDIR /app
-
-# Install dependencies
+# Copy and install Python dependencies (using headless OpenCV)
 COPY requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN sed -i 's/opencv-python/opencv-python-headless/' requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project files
+# Copy application source code
 COPY . .
 
-# Expose the port used by the app
+# Expose the HTTP port
 EXPOSE 8080
 
-# Start the application with gunicorn
-CMD ["gunicorn", "-b", "0.0.0.0:8080", "app:app"]
+# Launch the app using Gunicorn on the correct port
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "app:app"]
+
 
